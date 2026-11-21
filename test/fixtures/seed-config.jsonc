@@ -1,0 +1,68 @@
+{
+  // seed config (SPEC §8), used by the schema and e2e tests
+  "$schema": "./schema.json",
+  "settings": {
+    "layout": { "maxColumns": 2, "extraPane": "left" },
+    "editor": { "enabled": true, "windowName": "editor", "cmd": "nvim ." },
+    "appsWindowName": "apps",
+    "focus": "editor",
+    "paneTitles": false
+  },
+  "projects": {
+    "nms": {
+      "root": "~/projects/nms",
+      "layouts": { "panes": ["bun run dev"] }
+    },
+
+    "clipboard": {
+      "root": "~/projects/clipboard",
+      "default": "dev",
+      "layouts": [
+        {
+          "id": "dev",
+          "panes": [
+            { "name": "desktop", "cmd": "bun run dev:desktop" },
+            { "name": "web", "cmd": "bun run dev:web" }
+          ]
+        },
+        { "id": "app", "panes": [{ "name": "desktop", "cmd": "bun run dev:desktop" }] },
+        { "id": "web", "panes": [{ "name": "web", "cmd": "bun run dev:web" }] },
+        {
+          "id": "showcase",
+          "panes": [
+            { "name": "ui-showcase", "cmd": "bun run dev:ui-showcase" },
+            { "name": "app-showcase", "cmd": "bun run dev:app-showcase" }
+          ]
+        },
+        {
+          "id": "all",
+          "panes": [
+            { "name": "desktop", "cmd": "bun run dev:desktop" },
+            { "name": "web", "cmd": "bun run dev:web" },
+            { "name": "ui-showcase", "cmd": "bun run dev:ui-showcase" },
+            { "name": "app-showcase", "cmd": "bun run dev:app-showcase" }
+          ]
+        }
+      ]
+    },
+
+    "datejar": {
+      "root": "~/projects/datejar",
+      "default": "dev",
+      "layouts": [
+        { "id": "dev", "panes": ["bun run dev"] },
+        {
+          "id": "split",
+          "panes": [{ "name": "api", "cmd": "bun run dev:api" }, { "name": "web", "cmd": "bun run dev:web" }]
+        },
+        { "id": "be", "panes": [{ "name": "api", "cmd": "bun run dev:api" }] },
+        { "id": "fe", "panes": [{ "name": "web", "cmd": "bun run dev:web" }] }
+      ]
+    },
+
+    "worko": {
+      "root": "~/projects/worko",
+      "layouts": { "panes": ["bun run dev"] }
+    }
+  }
+}

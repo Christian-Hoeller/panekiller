@@ -1,0 +1,332 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "settings": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "layout": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "maxColumns": {
+              "default": 2,
+              "description": "Never more than this many panes side by side",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "extraPane": {
+              "default": "left",
+              "description": "Odd counts: which column gets the extra pane",
+              "type": "string",
+              "enum": [
+                "left",
+                "right"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "editor": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "default": true,
+              "description": "Append an editor window to every session",
+              "type": "boolean"
+            },
+            "windowName": {
+              "default": "editor",
+              "type": "string",
+              "minLength": 1
+            },
+            "cmd": {
+              "default": "nvim .",
+              "description": "Typed into the editor window",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "appsWindowName": {
+          "default": "apps",
+          "type": "string",
+          "minLength": 1
+        },
+        "focus": {
+          "default": "editor",
+          "description": "Window focused after creation",
+          "type": "string",
+          "enum": [
+            "apps",
+            "editor"
+          ]
+        },
+        "paneTitles": {
+          "default": false,
+          "description": "Set pane titles and pane-border-status top",
+          "type": "boolean"
+        },
+        "sendDelayMs": {
+          "default": 0,
+          "description": "Wait before typing commands (for prompt themes that mangle early input)",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "projects": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9-_]*$",
+        "not": {
+          "enum": [
+            "ls",
+            "edit",
+            "kill",
+            "add",
+            "completions",
+            "help"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "root": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project root, ~ expanded, must exist"
+          },
+          "env": {
+            "description": "Applied to every pane and the editor",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "editor": {
+            "description": "Deep-merged over settings.editor",
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "windowName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "cmd": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "layouts": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "Required when layouts is an array",
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-_]*$"
+                  },
+                  "panes": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "Command run in the project root"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "cmd": {
+                              "description": "Typed into the shell and run; omit for a plain shell",
+                              "type": "string"
+                            },
+                            "cwd": {
+                              "description": "Relative to root, absolute or ~",
+                              "type": "string"
+                            },
+                            "name": {
+                              "description": "Pane title when paneTitles is on",
+                              "type": "string"
+                            },
+                            "env": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "root": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Project root, ~ expanded, must exist"
+                  },
+                  "env": {
+                    "description": "Applied to every pane and the editor",
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "editor": {
+                    "description": "Deep-merged over settings.editor",
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "windowName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "cmd": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "panes"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "Required when layouts is an array",
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9-_]*$"
+                    },
+                    "panes": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "description": "Command run in the project root"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "cmd": {
+                                "description": "Typed into the shell and run; omit for a plain shell",
+                                "type": "string"
+                              },
+                              "cwd": {
+                                "description": "Relative to root, absolute or ~",
+                                "type": "string"
+                              },
+                              "name": {
+                                "description": "Pane title when paneTitles is on",
+                                "type": "string"
+                              },
+                              "env": {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "root": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Project root, ~ expanded, must exist"
+                    },
+                    "env": {
+                      "description": "Applied to every pane and the editor",
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "editor": {
+                      "description": "Deep-merged over settings.editor",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "windowName": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "cmd": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "panes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            ]
+          },
+          "default": {
+            "description": "Required when layouts is an array: the layout used without an argument",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-_]*$"
+          }
+        },
+        "required": [
+          "root",
+          "layouts"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "title": "panekiller config",
+  "description": "Config for pk (panekiller). https://github.com/Christian-Hoeller/panekiller"
+}
