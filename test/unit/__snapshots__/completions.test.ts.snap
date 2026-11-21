@@ -1,0 +1,17 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`zsh script snapshot 1`] = `
+"#compdef pk
+# pk (panekiller) zsh completion. Setup: eval "$(pk completions zsh)" in ~/.zshrc
+_pk() {
+  local -a candidates
+  candidates=("\${(@f)$(pk __complete "\${(@)words[2,CURRENT]}" 2>/dev/null)}")
+  [[ -z "\${candidates[*]}" ]] && return 1
+  _describe -V -t pk 'pk' candidates
+}
+if ! (( $+functions[compdef] )); then
+  autoload -Uz compinit && compinit
+fi
+compdef _pk pk
+"
+`;

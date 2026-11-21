@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "bun api",
+    "build": "tsc",
+    "develop": "x",
+    "predev": "y"
+  }
+}

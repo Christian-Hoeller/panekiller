@@ -1,0 +1,9 @@
+{
+  "workspaces": [
+    "web",
+    "api/"
+  ],
+  "scripts": {
+    "dev": "turbo dev"
+  }
+}

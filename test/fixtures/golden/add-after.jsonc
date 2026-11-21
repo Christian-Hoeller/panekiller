@@ -1,0 +1,27 @@
+// my config
+{
+  "$schema": "./schema.json",
+  "projects": {
+    // the shop
+    "shop": {
+      "root": "~/shop",
+      "layouts": { "panes": ["bun run dev"] }, // one pane
+    },
+    "new-app": {
+      "root": "~/new-app",
+      "default": "dev",
+      "layouts": [
+        {
+          "id": "dev",
+          "panes": [
+            {
+              "name": "web",
+              "cmd": "bun run dev:web",
+              "cwd": "apps/web"
+            }
+          ]
+        }
+      ]
+    },
+  },
+}

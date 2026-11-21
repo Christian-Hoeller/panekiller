@@ -1,0 +1,11 @@
+// my config
+{
+  "$schema": "./schema.json",
+  "projects": {
+    // the shop
+    "shop": {
+      "root": "~/shop",
+      "layouts": { "panes": ["bun run dev"] }, // one pane
+    },
+  },
+}
