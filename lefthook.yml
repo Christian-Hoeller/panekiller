@@ -5,3 +5,7 @@ pre-commit:
       run: bunx biome check --staged --no-errors-on-unmatched --files-ignore-unknown=true
     typecheck:
       run: bunx tsc --noEmit
+    dist:
+      # keep the committed bundle in sync (CI fails on drift)
+      glob: "{src/**,package.json,bun.lock}"
+      run: bun run build >/dev/null && git add dist/pk.js

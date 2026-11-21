@@ -124,71 +124,7 @@ function defaultContext() {
   };
 }
 // package.json
-var package_default = {
-  name: "@christian-hoeller/panekiller",
-  version: "0.1.0",
-  description: "Ends the pain of setting up tmux panes. One command per project.",
-  license: "MIT",
-  author: "Christian Hoeller",
-  type: "module",
-  bin: {
-    pk: "dist/pk.js"
-  },
-  files: [
-    "dist",
-    "schema.json",
-    "README.md",
-    "LICENSE"
-  ],
-  repository: {
-    type: "git",
-    url: "git+https://github.com/Christian-Hoeller/panekiller.git"
-  },
-  homepage: "https://github.com/Christian-Hoeller/panekiller#readme",
-  bugs: "https://github.com/Christian-Hoeller/panekiller/issues",
-  keywords: [
-    "tmux",
-    "cli",
-    "developer-tools",
-    "zsh",
-    "workspace"
-  ],
-  publishConfig: {
-    registry: "https://npm.pkg.github.com"
-  },
-  engines: {
-    node: ">=20"
-  },
-  packageManager: "bun@1.3.9",
-  scripts: {
-    lint: "biome check .",
-    format: "biome format --write .",
-    "format:check": "biome format .",
-    typecheck: "tsc --noEmit",
-    test: "bun run test:unit && bun run test:integration && bun run test:e2e",
-    "test:unit": "bun scripts/test-unit.ts",
-    "test:integration": "bun test test/integration",
-    "test:e2e": "bun test test/e2e",
-    build: "bun build src/cli.ts --target=node --minify-syntax --outfile dist/pk.js",
-    schema: "bun scripts/schema.ts",
-    demos: "bun scripts/demos.ts",
-    check: "bun scripts/check.ts"
-  },
-  devDependencies: {
-    "@biomejs/biome": "2.6.8",
-    "@clack/prompts": "1.9.0",
-    "@types/bun": "1.4.5",
-    "@types/node": "26.6.6",
-    "jsonc-parser": "3.3.1",
-    lefthook: "2.2.2",
-    typescript: "7.0.2",
-    zod: "4.6.7"
-  },
-  trustedDependencies: [
-    "@biomejs/biome",
-    "lefthook"
-  ]
-};
+var version = "0.1.0";
 
 // src/util/suggest.ts
 function levenshtein(a, b) {
@@ -2933,7 +2869,7 @@ __export(exports_external, {
 var exports_core2 = {};
 __export(exports_core2, {
   withParser: () => withParser,
-  version: () => version,
+  version: () => version2,
   validateURL: () => validateURL,
   validateAsync: () => validateAsync,
   validate: () => validate,
@@ -4427,10 +4363,10 @@ var cuid = /^[cC][0-9a-z]{6,}$/, cuid2 = /^[0-9a-z]+$/, ulid = /^[0-7][0-9A-HJKM
 function nanoidOfLength(length) {
   return new RegExp(`^[a-zA-Z0-9_-]{${length}}$`);
 }
-var duration = /^P(?:(\d+W)|(?!.*W)(?=\d|T\d)(\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+([.,]\d+)?S)?)?)$/, extendedDuration = /^[-+]?P(?!$)(?:(?:[-+]?\d+Y)|(?:[-+]?\d+[.,]\d+Y$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:(?:[-+]?\d+W)|(?:[-+]?\d+[.,]\d+W$))?(?:(?:[-+]?\d+D)|(?:[-+]?\d+[.,]\d+D$))?(?:T(?=[\d+-])(?:(?:[-+]?\d+H)|(?:[-+]?\d+[.,]\d+H$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:[-+]?\d+(?:[.,]\d+)?S)?)??$/, guid = /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/, uuid = (version) => {
-  if (!version)
+var duration = /^P(?:(\d+W)|(?!.*W)(?=\d|T\d)(\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+([.,]\d+)?S)?)?)$/, extendedDuration = /^[-+]?P(?!$)(?:(?:[-+]?\d+Y)|(?:[-+]?\d+[.,]\d+Y$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:(?:[-+]?\d+W)|(?:[-+]?\d+[.,]\d+W$))?(?:(?:[-+]?\d+D)|(?:[-+]?\d+[.,]\d+D$))?(?:T(?=[\d+-])(?:(?:[-+]?\d+H)|(?:[-+]?\d+[.,]\d+H$))?(?:(?:[-+]?\d+M)|(?:[-+]?\d+[.,]\d+M$))?(?:[-+]?\d+(?:[.,]\d+)?S)?)??$/, guid = /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/, uuid = (version2) => {
+  if (!version2)
     return /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/;
-  return new RegExp(`^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${version}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`);
+  return new RegExp(`^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-${version2}[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$`);
 }, uuid4 = /* @__PURE__ */ uuid(4), uuid6 = /* @__PURE__ */ uuid(6), uuid7 = /* @__PURE__ */ uuid(7), email = /^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/, html5Email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, rfc5322Email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, unicodeEmail = /^[^\s@"]{1,64}@[^\s@]{1,255}$/u, idnEmail = unicodeEmail, browserEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, _emoji = "^(?=[\\s\\S]*[\\p{Extended_Pictographic}\\p{Regional_Indicator}\\u20E3])[\\p{Extended_Pictographic}\\p{Emoji_Component}]+$";
 function emoji() {
   return new RegExp(_emoji, "u");
@@ -4899,7 +4835,7 @@ ${content.join(`
 }
 
 // node_modules/zod/v4/core/versions.js
-var version = {
+var version2 = {
   major: 4,
   minor: 6,
   patch: 7
@@ -4908,7 +4844,7 @@ var version = {
 // node_modules/zod/v4/core/schemas.js
 var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
   var _a2;
-  inst ?? (inst = {}), inst._zod.def = def, inst._zod.bag = inst._zod.bag || {}, inst._zod.version = version;
+  inst ?? (inst = {}), inst._zod.def = def, inst._zod.bag = inst._zod.bag || {}, inst._zod.version = version2;
   let defChecks = inst._zod.def.checks, checks = inst._zod.traits.has("$ZodCheck") ? [inst, ...defChecks ?? []] : defChecks?.length ? [...defChecks] : [];
   for (let ch of checks)
     for (let fn of ch._zod.onattach)
@@ -19465,8 +19401,8 @@ function fromJSONSchema(schema, params) {
   } catch {
     throw Error("fromJSONSchema input is not valid JSON (possibly cyclic); use $defs/$ref for recursive schemas");
   }
-  let version2 = detectVersion(normalized, params?.defaultTarget), defs = normalized.$defs || normalized.definitions || {}, ctx = {
-    version: version2,
+  let version3 = detectVersion(normalized, params?.defaultTarget), defs = normalized.$defs || normalized.definitions || {}, ctx = {
+    version: version3,
     defs,
     refs: /* @__PURE__ */ new Map,
     processing: /* @__PURE__ */ new Set,
@@ -20421,7 +20357,7 @@ function killCommand(ctx, project) {
 }
 
 // src/main.ts
-var VERSION = package_default.version;
+var VERSION = version;
 function complete(ctx, words) {
   try {
     let { config: config2 } = loadConfig({ env: ctx.env, home: ctx.home, readOnly: !0 }), out = formatCandidates(completionCandidates(config2, words, () => new Set(runningSessions(ctx.tmux({ dryRun: !1 })).keys())));

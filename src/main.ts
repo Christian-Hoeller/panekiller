@@ -1,4 +1,4 @@
-import pkg from '../package.json' with { type: 'json' };
+import { version } from '../package.json' with { type: 'json' };
 import { HELP, parseArgs } from './args';
 import { addCommand } from './commands/add';
 import { completionCandidates, formatCandidates, ZSH_SCRIPT } from './commands/completions';
@@ -11,7 +11,7 @@ import type { Context } from './context';
 import { runningSessions } from './tmux/session';
 import { PkError } from './util/errors';
 
-export const VERSION: string = pkg.version;
+export const VERSION: string = version;
 
 function complete(ctx: Context, words: string[]): number {
   try {
