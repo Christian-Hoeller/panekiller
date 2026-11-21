@@ -1,0 +1,15 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`subcommands ls shows running markers; kill kills only its own session 1`] = `
+"PROJECT  ROOT             LAYOUTS   STATUS
+shop     ~/projects/shop  dev*, be  ● running (layout be)
+blog     ~/projects/blog  default*  ● running (layout default)
+"
+`;
+
+exports[`subcommands ls shows running markers; kill kills only its own session 2`] = `
+"PROJECT  ROOT             LAYOUTS   STATUS
+shop     ~/projects/shop  dev*, be
+blog     ~/projects/blog  default*  ● running (layout default)
+"
+`;
