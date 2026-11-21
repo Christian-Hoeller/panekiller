@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "types": ["bun", "node"],
+    // jsonc-parser's "main" is a UMD build with dynamic requires that a bundle cannot resolve
+    "paths": { "jsonc-parser": ["./node_modules/jsonc-parser/lib/esm/main"] }
+  },
+  "include": ["src", "test", "scripts", "demo"]
+}
