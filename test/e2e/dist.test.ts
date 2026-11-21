@@ -134,9 +134,7 @@ describe('git install', () => {
       encoding: 'utf8',
       env: { ...process.env, npm_config_loglevel: 'error' },
     });
-    expect(
-      lstatSync(join(prefix, 'lib', 'node_modules', '@christian-hoeller', 'panekiller')).isDirectory(),
-    ).toBe(true);
+    expect(lstatSync(join(prefix, 'lib', 'node_modules', 'panekiller')).isDirectory()).toBe(true);
     expect(execFileSync(join(prefix, 'bin', 'pk'), ['--version'], { encoding: 'utf8', env })).toBe(
       `${pkg.version}\n`,
     );

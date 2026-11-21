@@ -23,24 +23,11 @@ Every project starts the same way: `cd` in, open a tmux session, split panes, `c
 
 ## Install
 
-**GitHub Packages** (published on every release). GitHub Packages needs a token **even for public packages**; one with `read:packages` is enough:
-
 ```sh
-# once: tell npm where @christian-hoeller packages live
-echo "@christian-hoeller:registry=https://npm.pkg.github.com" >> ~/.npmrc
-echo "//npm.pkg.github.com/:_authToken=$(gh auth token)" >> ~/.npmrc
-
-npm i -g @christian-hoeller/panekiller
+npm i -g panekiller
 ```
 
-**Straight from the repo** (no token, the built bundle is committed):
-
-```sh
-npm i -g github:Christian-Hoeller/panekiller        # latest main
-npm i -g github:Christian-Hoeller/panekiller#v0.1.1 # a tag
-```
-
-**Uninstall** (both): `npm rm -g @christian-hoeller/panekiller`
+Latest `main` instead: `npm i -g github:Christian-Hoeller/panekiller`. Uninstall: `npm rm -g panekiller`.
 
 Requirements: **tmux ≥ 3.2**, **Node ≥ 20**, **zsh** (other shells work for the panes, completion is zsh only). macOS and Linux/WSL.
 
@@ -253,7 +240,7 @@ Hooks for tests and demos:
 
 **Demos:** `bun run demos` re-records `assets/demo-*.gif` from `assets/tapes/*.tape` (needs `vhs`, `ffmpeg`, `tmux`, `nvim`, JetBrainsMono Nerd Font; `gifsicle` optional). The tapes use `demo/`: fake projects, fake dev servers and their own tmux server and config.
 
-**Release:** bump `version` in `package.json`, commit, `git tag v0.x.y && git push --tags`. The release workflow runs the full CI, then publishes to GitHub Packages and creates the GitHub Release with `dist/pk.js` and the tarball.
+**Release:** bump `version` in `package.json`, commit, `git tag v0.x.y && git push --tags`. The release workflow runs the full CI, then publishes to npm (trusted publishing, no token) and creates the GitHub Release with `dist/pk.js` and the tarball.
 
 ## License
 

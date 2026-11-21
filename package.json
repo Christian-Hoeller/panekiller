@@ -1,5 +1,5 @@
 {
-  "name": "@christian-hoeller/panekiller",
+  "name": "panekiller",
   "version": "0.1.1",
   "description": "Ends the pain of setting up tmux panes. One command per project.",
   "license": "MIT",
@@ -27,9 +27,6 @@
     "zsh",
     "workspace"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "engines": {
     "node": ">=20"
   },

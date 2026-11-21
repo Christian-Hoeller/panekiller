@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
+      id-token: write # npm trusted publishing (OIDC)
     steps:
       - uses: actions/checkout@v7
 
@@ -25,16 +25,14 @@ jobs:
             exit 1
           fi
 
+      # trusted publishing needs npm >= 11.5.1, which ships with Node 24
       - uses: actions/setup-node@v7
         with:
-          node-version: "22"
-          registry-url: https://npm.pkg.github.com
-          scope: "@christian-hoeller"
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
 
-      - name: Publish to GitHub Packages
+      - name: Publish to npm
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: GitHub Release
         env:
