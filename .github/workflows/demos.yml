@@ -1,0 +1,38 @@
+name: Demos
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Install tmux, nvim, zsh, gifsicle, JetBrainsMono Nerd Font
+        run: |
+          sudo apt-get update && sudo apt-get install -y tmux neovim zsh gifsicle unzip
+          mkdir -p ~/.local/share/fonts
+          curl -fsSL -o /tmp/font.zip https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip
+          unzip -o /tmp/font.zip -d ~/.local/share/fonts && fc-cache -f
+      - run: bun install --frozen-lockfile && bun run build
+      - name: Put pk on PATH
+        run: |
+          mkdir -p "$HOME/.local/bin" && ln -sf "$PWD/dist/pk.js" "$HOME/.local/bin/pk"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - uses: charmbracelet/vhs-action@v2
+        with:
+          install-only: true
+      - run: bun run demos
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: demos/update
+          title: "docs: re-record demo GIFs"
+          commit-message: "docs: re-record demo GIFs"
+          add-paths: assets/

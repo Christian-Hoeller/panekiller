@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: ${{ matrix.os }} / node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: ["20", "22"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Cache bun deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install tmux + zsh (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y tmux zsh
+
+      - name: Install tmux (macOS)
+        if: runner.os == 'macOS'
+        run: brew install tmux
+
+      - run: tmux -V && zsh --version && node --version && bun --version
+
+      - run: bun install --frozen-lockfile
+
+      - name: Lint + format
+        run: bunx biome ci .
+
+      - run: bun run typecheck
+
+      - name: Unit tests (coverage thresholds enforced)
+        run: bun run test:unit --coverage
+
+      - name: Integration tests (real tmux)
+        run: bun run test:integration
+
+      - name: Build + dist drift
+        run: |
+          bun run build
+          git diff --exit-code dist/
+
+      - name: Schema drift
+        run: |
+          bun run schema
+          git diff --exit-code schema.json
+
+      - name: E2E (node dist/pk.js + npm pack install)
+        run: bun run test:e2e
