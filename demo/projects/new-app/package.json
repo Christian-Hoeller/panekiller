@@ -1,0 +1,10 @@
+{
+  "name": "new-app",
+  "private": true,
+  "scripts": {
+    "dev": "bun ../../fake-server.ts new-web",
+    "dev:api": "bun ../../fake-server.ts new-api",
+    "dev:web": "bun ../../fake-server.ts new-web",
+    "build": "echo build"
+  }
+}

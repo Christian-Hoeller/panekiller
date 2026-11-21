@@ -1,0 +1,10 @@
+{
+  "name": "shop",
+  "private": true,
+  "scripts": {
+    "dev:api": "bun ../../fake-server.ts api",
+    "dev:web": "bun ../../fake-server.ts web",
+    "dev:admin": "bun ../../fake-server.ts admin",
+    "dev:worker": "bun ../../fake-server.ts worker"
+  }
+}

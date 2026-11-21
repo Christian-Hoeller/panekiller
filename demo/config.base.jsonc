@@ -1,0 +1,29 @@
+// Demo config for the README GIFs. Tapes copy it to demo/config.json first.
+{
+  "$schema": "./schema.json",
+  "settings": {
+    "editor": { "cmd": "nvim --clean package.json" },
+    "focus": "apps",
+    // p10k instant prompt echoes keys typed before zsh is ready; wait a moment
+    "sendDelayMs": 400
+  },
+  "projects": {
+    "shop": {
+      "root": "projects/shop",
+      "default": "dev",
+      "layouts": [
+        { "id": "dev", "panes": ["bun run dev:api", "bun run dev:web", "bun run dev:worker"] },
+        { "id": "be", "panes": ["bun run dev:api"] },
+        { "id": "fe", "panes": ["bun run dev:web"] },
+        {
+          "id": "all",
+          "panes": ["bun run dev:api", "bun run dev:web", "bun run dev:admin", "bun run dev:worker"]
+        }
+      ]
+    },
+    "blog": {
+      "root": "projects/blog",
+      "layouts": { "panes": ["bun run dev"] }
+    }
+  }
+}

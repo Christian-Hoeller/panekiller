@@ -1,0 +1,3 @@
+#!/bin/sh
+# pk from this checkout (used by the demo tapes)
+exec node "$(dirname "$0")/../../dist/pk.js" "$@"
