@@ -64,9 +64,9 @@ jobs:
       - name: Integration tests (real tmux)
         run: bun run test:integration
 
-      - name: Build + dist drift
+      - name: Bundle + dist drift
         run: |
-          bun run build
+          bun run bundle
           git diff --exit-code dist/
 
       - name: Schema drift

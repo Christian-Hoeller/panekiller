@@ -2,6 +2,7 @@ import { afterAll, describe, expect, test } from 'bun:test';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
@@ -121,4 +122,23 @@ describe('packaging', () => {
     npm(['rm', '-g', '--prefix', prefix, pkg.name]);
     expect(existsSync(bin)).toBe(false);
   }, 60000);
+});
+
+describe('git install', () => {
+  // npm links instead of copies when a git dependency has a `build`/`prepare` script, leaving a dangling bin
+  test('npm i -g from a git URL installs a working pk (HEAD)', () => {
+    const clone = join(tmp, 'clone');
+    const prefix = join(tmp, 'git-prefix');
+    execFileSync('git', ['clone', '-q', REPO, clone]);
+    execFileSync('npm', ['i', '-g', '--prefix', prefix, `git+file://${clone}`], {
+      encoding: 'utf8',
+      env: { ...process.env, npm_config_loglevel: 'error' },
+    });
+    expect(
+      lstatSync(join(prefix, 'lib', 'node_modules', '@christian-hoeller', 'panekiller')).isDirectory(),
+    ).toBe(true);
+    expect(execFileSync(join(prefix, 'bin', 'pk'), ['--version'], { encoding: 'utf8', env })).toBe(
+      `${pkg.version}\n`,
+    );
+  }, 120000);
 });

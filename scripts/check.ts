@@ -4,7 +4,7 @@ const steps: [string, string[]][] = [
   ['typecheck', ['bun', 'run', 'typecheck']],
   ['unit tests + coverage', ['bun', 'run', 'test:unit', '--coverage']],
   ['integration tests', ['bun', 'run', 'test:integration']],
-  ['build', ['bun', 'run', 'build']],
+  ['bundle', ['bun', 'run', 'bundle']],
   ['dist drift', ['git', 'diff', '--exit-code', '--stat', 'dist/']],
   ['schema', ['bun', 'run', 'schema']],
   ['schema drift', ['git', 'diff', '--exit-code', '--stat', 'schema.json']],

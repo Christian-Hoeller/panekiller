@@ -8,4 +8,4 @@ pre-commit:
     dist:
       # keep the committed bundle in sync (CI fails on drift)
       glob: "{src/**,package.json,bun.lock}"
-      run: bun run build >/dev/null && git add dist/pk.js
+      run: bun run bundle >/dev/null && git add dist/pk.js

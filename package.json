@@ -1,6 +1,6 @@
 {
   "name": "@christian-hoeller/panekiller",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ends the pain of setting up tmux panes. One command per project.",
   "license": "MIT",
   "author": "Christian Hoeller",
@@ -43,7 +43,7 @@
     "test:unit": "bun scripts/test-unit.ts",
     "test:integration": "bun test test/integration --timeout 60000",
     "test:e2e": "bun test test/e2e --timeout 120000",
-    "build": "bun build src/cli.ts --target=node --minify-syntax --outfile dist/pk.js",
+    "bundle": "bun build src/cli.ts --target=node --minify-syntax --outfile dist/pk.js",
     "schema": "bun scripts/schema.ts",
     "demos": "bun scripts/demos.ts",
     "check": "bun scripts/check.ts"

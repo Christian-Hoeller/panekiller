@@ -11,7 +11,7 @@ const only = process.argv.slice(2);
 const tapes = readdirSync('assets/tapes')
   .filter((f) => f.endsWith('.tape') && f !== 'common.tape')
   .filter((f) => !only.length || only.includes(f.replace(/\.tape$/, '')));
-const build = Bun.spawnSync(['bun', 'run', 'build'], { stdio: ['inherit', 'inherit', 'inherit'] });
+const build = Bun.spawnSync(['bun', 'run', 'bundle'], { stdio: ['inherit', 'inherit', 'inherit'] });
 if (build.exitCode !== 0) process.exit(1);
 for (const tape of tapes) {
   console.log(`▶ ${tape}`);

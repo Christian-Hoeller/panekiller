@@ -37,7 +37,7 @@ npm i -g @christian-hoeller/panekiller
 
 ```sh
 npm i -g github:Christian-Hoeller/panekiller        # latest main
-npm i -g github:Christian-Hoeller/panekiller#v0.1.0 # a tag
+npm i -g github:Christian-Hoeller/panekiller#v0.1.1 # a tag
 ```
 
 **Uninstall** (both): `npm rm -g @christian-hoeller/panekiller`
@@ -249,7 +249,7 @@ Hooks for tests and demos:
 | `PK_TMUX_SOCKET=<name>` | every tmux call gets `-L <name>` |
 | `PK_CONFIG=<path>` | config path override |
 
-`dist/pk.js` is committed so `npm i -g github:…` works without a build: run `bun run build` and commit it with your change (CI fails otherwise).
+`dist/pk.js` is committed so `npm i -g github:…` works without a build: run `bun run bundle` and commit it with your change (the pre-commit hook does this; CI fails otherwise). The script is deliberately not called `build`: npm treats a git dependency with a `build` script as needing a prepare step, which breaks `npm i -g github:…`.
 
 **Demos:** `bun run demos` re-records `assets/demo-*.gif` from `assets/tapes/*.tape` (needs `vhs`, `ffmpeg`, `tmux`, `nvim`, JetBrainsMono Nerd Font; `gifsicle` optional). The tapes use `demo/`: fake projects, fake dev servers and their own tmux server and config.
 
