@@ -35,6 +35,8 @@ export class World {
     mkdirSync(join(this.home, '.config', 'panekiller'), { recursive: true });
     // a plain zsh: no user rc, no new-user wizard, simple prompt
     writeFileSync(join(this.home, '.zshrc'), "PROMPT='%% '\nunsetopt BEEP\n");
+    // Ubuntu's /etc/zsh/zshrc runs compinit, whose prompts would swallow the typed command
+    writeFileSync(join(this.home, '.zshenv'), 'skip_global_compinit=1\n');
     const base: Record<string, string> = {};
     for (const [k, v] of Object.entries(process.env)) {
       if (v !== undefined && !k.startsWith('TMUX') && !k.startsWith('PK_') && k !== 'ZDOTDIR') base[k] = v;
@@ -93,7 +95,7 @@ export class World {
     for (;;) {
       const v = fn();
       if (v) return v;
-      if (Date.now() > end) throw new Error(`timed out waiting for ${what}`);
+      if (Date.now() > end) throw new Error(`timed out waiting for ${what}\n${this.dump()}`);
       await Bun.sleep(50);
     }
   }
@@ -116,6 +118,19 @@ export class World {
 
   dev(name: string, extra = ''): string {
     return `sh ${FAKE_DEV} ${name}${extra ? ` ${extra}` : ''}`;
+  }
+
+  /** Every pane's content, for failure messages. */
+  dump(): string {
+    const panes =
+      this.tryTmux('list-panes', '-a', '-F', '#{pane_id} #{session_name}:#{window_name}') ?? '(no server)';
+    return panes
+      .split('\n')
+      .map((line) => {
+        const id = line.split(' ')[0] ?? '';
+        return `--- ${line}\n${this.tryTmux('capture-pane', '-p', '-t', id) ?? ''}`;
+      })
+      .join('\n');
   }
 
   dispose(): void {
