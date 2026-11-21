@@ -50,7 +50,7 @@ export const paneSchema = z.union([
 ]);
 
 const baseFields = {
-  root: z.string().min(1).describe('Project root, ~ expanded, must exist'),
+  root: z.string().min(1).describe('Project root: absolute, ~, or relative to the config file. Must exist'),
   env: env.optional().describe('Applied to every pane and the editor'),
   editor: editorOverride.optional().describe('Deep-merged over settings.editor'),
 };

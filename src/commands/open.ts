@@ -1,37 +1,34 @@
+import { dirname } from 'node:path';
 import type { OpenFlags } from '../args';
 import { loadConfig } from '../config/load';
-import { type ResolvedWorkspace, resolve } from '../config/resolve';
+import { resolve } from '../config/resolve';
 import type { Config } from '../config/schema';
 import type { Context } from '../context';
 import { buildSession } from '../tmux/build';
-import type { Tmux } from '../tmux/client';
 import { enterSession, killSession, sessionExists, sessionLayout } from '../tmux/session';
 import { PkError } from '../util/errors';
 import { findProjectByCwd, resolvePath } from '../util/paths';
 import { decide, parseAnswer, promptText } from './decide';
 import { formatLs } from './ls';
 
-export function projectRoots(config: Config, home: string): Record<string, string> {
+export function projectRoots(config: Config, home: string, base = '/'): Record<string, string> {
   return Object.fromEntries(
-    Object.entries(config.projects).map(([id, p]) => [id, resolvePath(p.root, '/', home)]),
+    Object.entries(config.projects).map(([id, p]) => [id, resolvePath(p.root, base, home)]),
   );
 }
 
 export type OpenArgs = { project?: string; layout?: string; flags: OpenFlags };
 
-function build(ctx: Context, tmux: Tmux, ws: ResolvedWorkspace): void {
-  buildSession(tmux, ws, ctx.size);
-}
-
 export async function openCommand(ctx: Context, args: OpenArgs): Promise<number> {
-  const { config } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err });
-  const projectId = args.project ?? findProjectByCwd(ctx.cwd, projectRoots(config, ctx.home));
+  const { config, path } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err });
+  const base = dirname(path);
+  const projectId = args.project ?? findProjectByCwd(ctx.cwd, projectRoots(config, ctx.home, base));
   if (!projectId) {
     ctx.out(formatLs(config, new Map()));
     ctx.err(`\nNo project contains ${ctx.cwd}. Run \`pk add\` to register this directory.`);
     return 1;
   }
-  const ws = resolve(config, projectId, args.layout, { home: ctx.home, exists: ctx.exists });
+  const ws = resolve(config, projectId, args.layout, { home: ctx.home, exists: ctx.exists, base });
   const tmux = ctx.tmux({ dryRun: args.flags.dryRun });
   const inside = Boolean(ctx.env.TMUX);
   const exists = sessionExists(tmux, ws.session);
@@ -57,7 +54,7 @@ export async function openCommand(ctx: Context, args: OpenArgs): Promise<number>
   }
 
   if (action === 'recreate') killSession(tmux, ws.session);
-  if (action === 'create' || action === 'recreate') build(ctx, tmux, ws);
+  if (action === 'create' || action === 'recreate') buildSession(tmux, ws, ctx.size);
 
   if (args.flags.detached) {
     ctx.out(

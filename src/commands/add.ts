@@ -1,12 +1,12 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { basename, join, relative } from 'node:path';
+import { basename, dirname, join, relative } from 'node:path';
 import * as p from '@clack/prompts';
 import { applyEdits, modify } from 'jsonc-parser';
 import { loadConfig } from '../config/load';
 import { ID_PATTERN, RESERVED_IDS } from '../config/schema';
 import type { Context } from '../context';
 import { PkError } from '../util/errors';
-import { tildify } from '../util/paths';
+import { isInside, tildify } from '../util/paths';
 
 export type ScriptCandidate = {
   /** Directory relative to the root, '' for the root itself. */
@@ -98,6 +98,11 @@ export function insertProject(text: string, id: string, entry: unknown): string 
   return applyEdits(text, edits);
 }
 
+/** How `root` is written: relative when under the config dir, else with `~`. */
+export function rootFor(dir: string, configDir: string, home: string): string {
+  return isInside(dir, configDir) && dir !== configDir ? relative(configDir, dir) : tildify(dir, home);
+}
+
 export function suggestId(dir: string): string {
   return (
     basename(dir)
@@ -178,7 +183,7 @@ export async function addCommand(ctx: Context): Promise<number> {
     layouts.push({ id: lid, panes: await pickPanes(candidates, ctx.cwd, `Panes for "${lid}"`) });
   }
 
-  const entry = buildEntry(tildify(ctx.cwd, ctx.home), layouts);
+  const entry = buildEntry(rootFor(ctx.cwd, dirname(path), ctx.home), layouts);
   writeFileSync(path, insertProject(text, id, entry));
   p.note(JSON.stringify({ [id]: entry }, null, 2), `Added to ${tildify(path, ctx.home)}`);
   p.outro(`Run it: pk ${id}`);

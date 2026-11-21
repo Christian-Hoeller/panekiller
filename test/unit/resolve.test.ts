@@ -122,3 +122,12 @@ describe('resolve', () => {
     expect(defaultLayoutId(multi)).toBe('dev');
   });
 });
+
+test('relative root resolves against the config dir', () => {
+  const c = configSchema.parse({
+    projects: { rel: { root: 'projects/rel', layouts: { panes: [{ cwd: 'api' }] } } },
+  });
+  const ws = resolve(c, 'rel', undefined, { ...opts, base: '/cfg' });
+  expect(ws.root).toBe('/cfg/projects/rel');
+  expect(ws.panes[0]?.cwd).toBe('/cfg/projects/rel/api');
+});

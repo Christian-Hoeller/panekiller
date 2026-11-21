@@ -309,7 +309,7 @@ Config: $PK_CONFIG or \${XDG_CONFIG_HOME:-~/.config}/panekiller/config.json
 
 // src/commands/add.ts
 import { existsSync as existsSync3, readdirSync, readFileSync as readFileSync2, statSync, writeFileSync as writeFileSync2 } from "node:fs";
-import { basename, join as join3, relative } from "node:path";
+import { basename, dirname as dirname2, join as join3, relative } from "node:path";
 
 // node_modules/@clack/core/dist/index.mjs
 import { styleText } from "node:util";
@@ -19695,7 +19695,7 @@ var ID_PATTERN = /^[a-z0-9][a-z0-9-_]*$/, RESERVED_IDS = ["ls", "edit", "kill", 
     env: env.optional()
   })
 ]), baseFields = {
-  root: exports_external.string().min(1).describe("Project root, ~ expanded, must exist"),
+  root: exports_external.string().min(1).describe("Project root: absolute, ~, or relative to the config file. Must exist"),
   env: env.optional().describe("Applied to every pane and the editor"),
   editor: editorOverride.optional().describe("Deep-merged over settings.editor")
 }, layoutSchema = exports_external.strictObject({
@@ -19965,6 +19965,9 @@ function insertProject(text2, id2, entry) {
   });
   return applyEdits(text2, edits);
 }
+function rootFor(dir, configDir, home) {
+  return isInside(dir, configDir) && dir !== configDir ? relative(configDir, dir) : tildify(dir, home);
+}
 function suggestId(dir) {
   return basename(dir).toLowerCase().replace(/[^a-z0-9-_]+/g, "-").replace(/^[^a-z0-9]+/, "") || "project";
 }
@@ -20018,7 +20021,7 @@ async function addCommand(ctx) {
     let taken = layouts.map((l) => l.id), lid = cancelled(await text({ message: "Layout id", validate: (v) => validateId(v ?? "", taken) }));
     layouts.push({ id: lid, panes: await pickPanes(candidates, ctx.cwd, `Panes for "${lid}"`) });
   }
-  let entry = buildEntry(tildify(ctx.cwd, ctx.home), layouts);
+  let entry = buildEntry(rootFor(ctx.cwd, dirname2(path), ctx.home), layouts);
   return writeFileSync2(path, insertProject(text2, id2, entry)), note(JSON.stringify({ [id2]: entry }, null, 2), `Added to ${tildify(path, ctx.home)}`), outro(`Run it: pk ${id2}`), 0;
 }
 
@@ -20067,7 +20070,7 @@ function resolve2(config2, projectId, layoutId, opts) {
   let project = config2.projects[projectId];
   if (!project)
     throw new PkError(unknownMessage("project", projectId, Object.keys(config2.projects)));
-  let { id: id2, layout } = pickLayout(projectId, project, layoutId), { editor: baseEditor, ...settings2 } = config2.settings, { layouts: _l, default: _d, ...projectBase } = project, { id: _id, panes, ...layoutBase } = layout, merged = deepMerge({ root: project.root, editor: baseEditor, env: {} }, projectBase, layoutBase), root = resolvePath(merged.root, "/", opts.home), resolvedPanes = panes.map(normalizePane).map((p2) => ({
+  let { id: id2, layout } = pickLayout(projectId, project, layoutId), { editor: baseEditor, ...settings2 } = config2.settings, { layouts: _l, default: _d, ...projectBase } = project, { id: _id, panes, ...layoutBase } = layout, merged = deepMerge({ root: project.root, editor: baseEditor, env: {} }, projectBase, layoutBase), root = resolvePath(merged.root, opts.base ?? "/", opts.home), resolvedPanes = panes.map(normalizePane).map((p2) => ({
     ...p2.cmd !== void 0 && { cmd: p2.cmd },
     ...p2.name !== void 0 && { name: p2.name },
     cwd: p2.cwd ? resolvePath(p2.cwd, root, opts.home) : root,
@@ -20189,6 +20192,9 @@ function editCommand(ctx) {
   return ctx.out("✓ config valid"), 0;
 }
 
+// src/commands/kill.ts
+import { dirname as dirname4 } from "node:path";
+
 // src/tmux/session.ts
 var exact = (session) => `=${session}`, exactTarget = (session) => `=${session}:`, LAYOUT_OPTION = "@pk_layout";
 function sessionExists(tmux, session) {
@@ -20217,6 +20223,9 @@ function enterSession(tmux, session, insideTmux) {
   else
     tmux.interactive(["attach-session", "-t", exact(session)]);
 }
+
+// src/commands/open.ts
+import { dirname as dirname3 } from "node:path";
 
 // src/layout/plan.ts
 function planLayout(n2, settings2) {
@@ -20366,18 +20375,15 @@ function lsCommand(ctx) {
 }
 
 // src/commands/open.ts
-function projectRoots(config2, home) {
-  return Object.fromEntries(Object.entries(config2.projects).map(([id2, p2]) => [id2, resolvePath(p2.root, "/", home)]));
-}
-function build(ctx, tmux, ws) {
-  buildSession(tmux, ws, ctx.size);
+function projectRoots(config2, home, base = "/") {
+  return Object.fromEntries(Object.entries(config2.projects).map(([id2, p2]) => [id2, resolvePath(p2.root, base, home)]));
 }
 async function openCommand(ctx, args) {
-  let { config: config2 } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err }), projectId = args.project ?? findProjectByCwd(ctx.cwd, projectRoots(config2, ctx.home));
+  let { config: config2, path } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err }), base = dirname3(path), projectId = args.project ?? findProjectByCwd(ctx.cwd, projectRoots(config2, ctx.home, base));
   if (!projectId)
     return ctx.out(formatLs(config2, /* @__PURE__ */ new Map)), ctx.err(`
 No project contains ${ctx.cwd}. Run \`pk add\` to register this directory.`), 1;
-  let ws = resolve2(config2, projectId, args.layout, { home: ctx.home, exists: ctx.exists }), tmux = ctx.tmux({ dryRun: args.flags.dryRun }), inside = Boolean(ctx.env.TMUX), exists = sessionExists(tmux, ws.session), action = decide(exists, args.flags, ctx.isTTY && !args.flags.dryRun);
+  let ws = resolve2(config2, projectId, args.layout, { home: ctx.home, exists: ctx.exists, base }), tmux = ctx.tmux({ dryRun: args.flags.dryRun }), inside = Boolean(ctx.env.TMUX), exists = sessionExists(tmux, ws.session), action = decide(exists, args.flags, ctx.isTTY && !args.flags.dryRun);
   if (action === "error" && args.flags.dryRun)
     action = "attach";
   if (action === "error") {
@@ -20395,7 +20401,7 @@ No project contains ${ctx.cwd}. Run \`pk add\` to register this directory.`), 1;
   if (action === "recreate")
     killSession(tmux, ws.session);
   if (action === "create" || action === "recreate")
-    build(ctx, tmux, ws);
+    buildSession(tmux, ws, ctx.size);
   if (args.flags.detached)
     return ctx.out(action === "attach" ? `Session "${ws.session}" is already running.` : `Created session "${ws.session}" (layout ${ws.layoutId}).`), 0;
   return enterSession(tmux, ws.session, inside), 0;
@@ -20403,7 +20409,7 @@ No project contains ${ctx.cwd}. Run \`pk add\` to register this directory.`), 1;
 
 // src/commands/kill.ts
 function killCommand(ctx, project) {
-  let { config: config2 } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err }), id2 = project ?? findProjectByCwd(ctx.cwd, projectRoots(config2, ctx.home));
+  let { config: config2, path } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err }), id2 = project ?? findProjectByCwd(ctx.cwd, projectRoots(config2, ctx.home, dirname4(path)));
   if (!id2)
     throw new PkError(`No project contains ${ctx.cwd}. Usage: pk kill <project>`);
   let tmux = ctx.tmux({ dryRun: !1 }), session = sessionName(id2);

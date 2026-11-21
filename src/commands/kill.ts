@@ -1,3 +1,4 @@
+import { dirname } from 'node:path';
 import { loadConfig } from '../config/load';
 import { sessionName } from '../config/resolve';
 import type { Context } from '../context';
@@ -8,8 +9,8 @@ import { unknownMessage } from '../util/suggest';
 import { projectRoots } from './open';
 
 export function killCommand(ctx: Context, project: string | undefined): number {
-  const { config } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err });
-  const id = project ?? findProjectByCwd(ctx.cwd, projectRoots(config, ctx.home));
+  const { config, path } = loadConfig({ env: ctx.env, home: ctx.home, notice: ctx.err });
+  const id = project ?? findProjectByCwd(ctx.cwd, projectRoots(config, ctx.home, dirname(path)));
   if (!id) throw new PkError(`No project contains ${ctx.cwd}. Usage: pk kill <project>`);
   const tmux = ctx.tmux({ dryRun: false });
   const session = sessionName(id);

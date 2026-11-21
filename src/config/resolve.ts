@@ -29,6 +29,8 @@ export type ResolveOptions = {
   home: string;
   /** Path existence check; inject for tests. */
   exists: (path: string) => boolean;
+  /** Relative roots resolve against this (the config file's directory). */
+  base?: string;
 };
 
 export function sessionName(projectId: string): string {
@@ -79,7 +81,7 @@ export function resolve(
     layoutBase,
   );
 
-  const root = resolvePath(merged.root, '/', opts.home);
+  const root = resolvePath(merged.root, opts.base ?? '/', opts.home);
   const resolvedPanes = panes.map(normalizePane).map(
     (p): ResolvedPane => ({
       ...(p.cmd !== undefined && { cmd: p.cmd }),

@@ -7,6 +7,7 @@ import {
   insertProject,
   isDevScript,
   paneEntry,
+  rootFor,
   runner,
   suggestId,
   validateId,
@@ -83,6 +84,12 @@ describe('entry building', () => {
         { id: 'fe', panes: [{ name: 'shell' }] },
       ],
     });
+  });
+
+  test('rootFor', () => {
+    expect(rootFor('/cfg/projects/a', '/cfg', '/h')).toBe('projects/a');
+    expect(rootFor('/h/p/a', '/cfg', '/h')).toBe('~/p/a');
+    expect(rootFor('/cfg', '/cfg', '/h')).toBe('/cfg');
   });
 
   test('ids', () => {
