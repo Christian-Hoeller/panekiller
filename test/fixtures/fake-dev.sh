@@ -2,9 +2,11 @@
 # Integration-test stand-in for a dev server: records where and with which env it ran, then idles.
 #   fake-dev.sh <name> [--exit]
 name="$1"
+# write to a temp file and rename, so readers never see a half-written marker
 {
   echo "pwd=$(pwd -P)"
   env | grep '^PKT_' | sort
-} > "$PK_MARK_DIR/$name"
+} > "$PK_MARK_DIR/.$name.tmp"
+mv "$PK_MARK_DIR/.$name.tmp" "$PK_MARK_DIR/$name"
 [ "$2" = "--exit" ] && exit 0
 exec sleep 600
