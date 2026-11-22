@@ -1,6 +1,6 @@
 {
   "name": "panekiller",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ends the pain of setting up tmux panes. One command per project.",
   "license": "MIT",
   "author": "Christian Hoeller",
