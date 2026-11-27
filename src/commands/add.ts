@@ -55,7 +55,7 @@ function expandPattern(root: string, pattern: string): string[] {
 
 export const isDevScript = (name: string): boolean => /^dev(\b|[:_-]|$)/.test(name);
 
-/** Finds `dev*` scripts in the root package.json and in workspace packages. */
+/** Finds all scripts in the root package.json and in workspace packages. */
 export function detectScripts(root: string): ScriptCandidate[] {
   const run = runner(root);
   const rootPkg = readPackage(root);
@@ -63,9 +63,11 @@ export function detectScripts(root: string): ScriptCandidate[] {
   const out: ScriptCandidate[] = [];
   for (const dir of [...new Set(dirs)]) {
     const pkg = dir ? readPackage(join(root, dir)) : rootPkg;
-    for (const script of Object.keys(pkg?.scripts ?? {}).filter(isDevScript)) {
-      const suffix = script.replace(/^dev[:_-]?/, '');
-      out.push({ dir, script, cmd: `${run} ${script}`, name: suffix || (dir ? basename(dir) : 'dev') });
+    for (const script of Object.keys(pkg?.scripts ?? {})) {
+      const name = isDevScript(script)
+        ? script.replace(/^dev[:_-]?/, '') || (dir ? basename(dir) : 'dev')
+        : script;
+      out.push({ dir, script, cmd: `${run} ${script}`, name });
     }
   }
   return out;
@@ -129,15 +131,14 @@ function cancelled<T>(v: T): Exclude<T, symbol> {
 
 async function pickPanes(candidates: ScriptCandidate[], root: string, message: string): Promise<PaneEntry[]> {
   if (!candidates.length) {
-    const cmd = cancelled(
-      await p.text({ message: `${message} (no dev scripts found; empty = plain shell)` }),
-    );
+    const cmd = cancelled(await p.text({ message: `${message} (no scripts found; empty = plain shell)` }));
     return cmd?.trim() ? [cmd.trim()] : [];
   }
   const picked = cancelled(
     await p.multiselect({
       message,
       required: false,
+      initialValues: candidates.flatMap((c, i) => (isDevScript(c.script) ? [i] : [])),
       options: candidates.map((c, i) => ({
         value: i,
         label: c.cmd,

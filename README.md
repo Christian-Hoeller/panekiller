@@ -44,7 +44,7 @@ Optional, for muscle memory: `alias tmn=pk`.
 Inside a project:
 
 ```sh
-pk add   # pick the dev scripts that should get a pane
+pk add   # pick the scripts that should get a pane
 pk       # open it
 ```
 
@@ -165,7 +165,7 @@ Each pane runs your normal interactive shell; `pk` types the command into it. Th
 | `pk ls` | projects, layouts (`*` = default) and running sessions |
 | `pk edit` | open the config in `$EDITOR` (fallback `nvim`), validate when it closes |
 | `pk kill [project]` | kill the project's session (default: project of `$PWD`) |
-| `pk add` | add `$PWD` as a project, picking up `dev*` scripts from `package.json` and workspaces |
+| `pk add` | add `$PWD` as a project, picking scripts from `package.json` and workspaces (`dev*` preselected) |
 | `pk completions zsh` | print the zsh completion script |
 
 | Flag | |

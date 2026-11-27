@@ -19874,9 +19874,9 @@ function detectScripts(root) {
   let run = runner(root), rootPkg = readPackage(root), dirs = ["", ...workspacePatterns(rootPkg).flatMap((pat) => expandPattern(root, pat))], out = [];
   for (let dir of [...new Set(dirs)]) {
     let pkg = dir ? readPackage(join3(root, dir)) : rootPkg;
-    for (let script of Object.keys(pkg?.scripts ?? {}).filter(isDevScript)) {
-      let suffix = script.replace(/^dev[:_-]?/, "");
-      out.push({ dir, script, cmd: `${run} ${script}`, name: suffix || (dir ? basename(dir) : "dev") });
+    for (let script of Object.keys(pkg?.scripts ?? {})) {
+      let name = isDevScript(script) ? script.replace(/^dev[:_-]?/, "") || (dir ? basename(dir) : "dev") : script;
+      out.push({ dir, script, cmd: `${run} ${script}`, name });
     }
   }
   return out;
@@ -19923,12 +19923,13 @@ function cancelled(v) {
 }
 async function pickPanes(candidates, root, message) {
   if (!candidates.length) {
-    let cmd = cancelled(await text({ message: `${message} (no dev scripts found; empty = plain shell)` }));
+    let cmd = cancelled(await text({ message: `${message} (no scripts found; empty = plain shell)` }));
     return cmd?.trim() ? [cmd.trim()] : [];
   }
   return cancelled(await multiselect({
     message,
     required: !1,
+    initialValues: candidates.flatMap((c2, i2) => isDevScript(c2.script) ? [i2] : []),
     options: candidates.map((c2, i2) => ({
       value: i2,
       label: c2.cmd,

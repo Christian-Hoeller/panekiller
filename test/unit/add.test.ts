@@ -22,6 +22,9 @@ describe('detectScripts', () => {
     expect(detectScripts(join(repos, 'root-scripts'))).toEqual([
       { dir: '', script: 'dev', cmd: 'bun run dev', name: 'dev' },
       { dir: '', script: 'dev:api', cmd: 'bun run dev:api', name: 'api' },
+      { dir: '', script: 'build', cmd: 'bun run build', name: 'build' },
+      { dir: '', script: 'develop', cmd: 'bun run develop', name: 'develop' },
+      { dir: '', script: 'predev', cmd: 'bun run predev', name: 'predev' },
     ]);
   });
 
@@ -37,6 +40,7 @@ describe('detectScripts', () => {
     expect(detectScripts(join(repos, 'apps-dir')).map((c) => `${c.dir} ${c.cmd} ${c.name}`)).toEqual([
       'apps/desktop yarn dev desktop',
       'apps/frontend yarn dev frontend',
+      'apps/frontend yarn test test',
       'packages/ui yarn dev ui',
     ]);
   });
