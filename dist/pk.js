@@ -124,7 +124,7 @@ function defaultContext() {
   };
 }
 // package.json
-var version = "0.1.2";
+var version = "0.1.3";
 
 // src/util/suggest.ts
 function levenshtein(a, b) {
